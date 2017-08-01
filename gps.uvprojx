@@ -719,6 +719,11 @@
               <FileType>1</FileType>
               <FilePath>.\source\swu.c</FilePath>
             </File>
+            <File>
+              <FileName>gps.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\source\gps.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

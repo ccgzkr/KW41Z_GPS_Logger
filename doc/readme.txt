@@ -1,6 +1,7 @@
 Overview
 
 Software emulation of UART by CCGZKR from EEWORLD
+Based on KEIL MDK 5.18
 
 Board settings
 ==============
