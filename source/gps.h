@@ -3,12 +3,28 @@
 
 #include "fsl_common.h"
 
+const uint8_t cmdSirfHead[7][] = {
+    "$PSRF100",
+    "$PSRF101",
+    "$PSRF102",
+    "$PSRF103",
+    "$PSRF104",
+    "$PSRF105",
+    "$PSRF106",
+};
+const uint8_t cmdMskHead[] = "$GPMSK";
+const uint8_t comma[] = ",";
+const uint8_t asterisk[] = "*";
+const uint8_t cmdTail[] = "\r\n";
+
 /*
 ** NMEA relevant
 */
+
+
 typedef enum EgpsNmeaOut
 {    
-    NON = 0;
+    NON = 0,
     GGA,
     GLL,
     GSA,
@@ -19,6 +35,19 @@ typedef enum EgpsNmeaOut
     NDF,
     ZDA
 }EGPSNMEAOUT;
+
+typedef enum EgpsNmeaIn
+{    
+    NON = 0,
+    PSRF100,    // SetSerialPort
+    PSRF101,    // NavigationInitialization
+    PSRF102,    // SetDGPSPort
+    PSRF103,    // Query/Rate Control
+    PSRF104,    // LLANavigationInitialization
+    PSRF105,    // Development Data On/Off
+    PSRF106,    // Select Datum
+    GPMSK       // MSK Receiver Interface
+}EGPSNMEAIN;
 
 typedef enum Emonth
 {    
@@ -79,26 +108,26 @@ typedef struct SgpsNmeaSatInfo
 
 typedef struct SgpsNmeaGga
 {
-    uint8_t ucMid[8];
+    uint8_t     ucMid[8];
     SGPSNMEAUTC Sutc;
-    uint8_t ucNs;    
-    uint8_t ucEw;
-    uint8_t ucPfi;  //0: Fix not available or invalid; 1: GPS SPS Mode, fix valid; 2: Differential GPS, SPS Mode, fix valid; 4: GPS PPS Mode, fix valid
-    uint8_t ucSat;
+    uint8_t     ucNs;    
+    uint8_t     ucEw;
+    uint8_t     ucPfi;  //0: Fix not available or invalid; 1: GPS SPS Mode, fix valid; 2: Differential GPS, SPS Mode, fix valid; 4: GPS PPS Mode, fix valid
+    uint8_t     ucSat;
     SGPSNMEALAT Slat;
     SGPSNMEALON Slon;
-    double dblHdop;    //HDOP2+VDOP2=PDOP2    PDOP2+TDOP2=GDOP2 
-    uint32_t uiMslAlt;
-    uint8_t ucUnit;
+    double      dblHdop;    //HDOP2+VDOP2=PDOP2    PDOP2+TDOP2=GDOP2 
+    uint32_t    uiMslAlt;
+    uint8_t     ucUnit;
     //uint32_t uiChecksum;
 }SGPSNMEAGGA;
 
 typedef struct SgpsNmeaGll
 {
-    uint8_t ucMid[8];
-    uint8_t ucNs;
-    uint8_t ucEw;
-    uint8_t ucDataValid;
+    uint8_t     ucMid[8];
+    uint8_t     ucNs;
+    uint8_t     ucEw;
+    uint8_t     ucDataValid;
     SGPSNMEALAT Slat;    
     SGPSNMEALON Slon;    
     SGPSNMEAUTC Sutc;    
@@ -107,53 +136,53 @@ typedef struct SgpsNmeaGll
 
 typedef struct SgpsNmeaGsa
 {
-    uint8_t ucMid[8];
-    uint8_t ucMode1;    //1: Fix not available; 2: 2D; 3: 3D
-    uint8_t ucMode2;    //M: Manual; A: Automatic
-    uint8_t ucSatId[12];
-    double dblPdop;    //HDOP2+VDOP2=PDOP2 PDOP2+TDOP2=GDOP2
-    double dblHdop;
-    double dblVdop;
+    uint8_t     ucMid[8];
+    uint8_t     ucMode1;    //1: Fix not available; 2: 2D; 3: 3D
+    uint8_t     ucMode2;    //M: Manual; A: Automatic
+    uint8_t     ucSatId[12];
+    double      dblPdop;    //HDOP2+VDOP2=PDOP2 PDOP2+TDOP2=GDOP2
+    double      dblHdop;
+    double      dblVdop;
     //uint32_t uiChecksum;
 }SGPSNMEAGSA;
 
 typedef struct SgpsNmeaGsv
 {
-    uint8_t ucMid[8];    
-    uint8_t ucSat;
+    uint8_t     ucMid[8];    
+    uint8_t     ucSat;
     SGPSNMEASATINFO SsatInfo[12];
     //uint32_t uiChecksum;
 }SGPSNMEAGSV;
 
 typedef struct SgpsNmeaRmc
 {
-    uint8_t ucMid[8];
+    uint8_t     ucMid[8];
     SGPSNMEAUTC Sutc;
-    uint8_t ucSatStat;    //A: data valid; V: data not valid
+    uint8_t     ucSatStat;    //A: data valid; V: data not valid
     SGPSNMEALAT Slat;
-    uint8_t ucNs;
+    uint8_t     ucNs;
     SGPSNMEALON Slon;
-    uint8_t ucEw;
-    double dblSpd;
-    double dblCourse;
+    uint8_t     ucEw;
+    double      dblSpd;
+    double      dblCourse;
     
 }SGPSNMEARMC;
 
 typedef struct SgpsNmeaMss
 {
-    uint8_t ucMid[8];
-    uint8_t ucSS;
-    uint8_t ucSnr;
-    uint8_t ucBcnFrq;
-    uint8_t ucBcnBr;
+    uint8_t     ucMid[8];
+    uint8_t     ucSS;
+    uint8_t     ucSnr;
+    uint8_t     ucBcnFrq;
+    uint8_t     ucBcnBr;
 }SGPSNMEAMSS;
 
 typedef struct SgpsNmeaVtg
 {
-    uint8_t ucMid[8];
-    double dblCourse;
-    uint8_t ucRef;
-    double dblSpd;
+    uint8_t     ucMid[8];
+    double      dblCourse;
+    uint8_t     ucRef;
+    double      dblSpd;
     //uint32_t uiChecksum;
 }SGPSNMEAVTG;
 
@@ -170,7 +199,12 @@ typedef union UgpsMessage
 
 typedef struct Scmd100
 {
-    
+    uint8_t ucMid[10];
+    uint8_t ucProtocol;
+    uint8_t ucBaud;
+    uint8_t ucDatabits;
+    uint8_t ucStopBits;
+    uint8_t ucParity;
 }SCMD100;
 
 

@@ -9,6 +9,8 @@ static uint32_t uiIsDigit(const uint8_t ch);
 static uint32_t uiTimeValidator(int32_t * time);
 static uint32_t uiGpsUtcTimCon(int32_t timezone, int32_t * time);
 static uint8_t ucCrcCh2Dig(uint8_t *str);
+static void GpsNmeaStrCpy(uint8_t * src, uint8_t * dst, uint32_t uiChQty);
+
 
 
 int32_t uiDate[2][13] = {
@@ -296,7 +298,7 @@ static uint8_t ucCrcCh2Dig(uint8_t *str)
 **  NMEA message validator
 **
 */
-EGPSNMEAOUT uiGpsNmeaMsgValid(char * pGpsMsgStr)
+EGPSNMEAOUT uiGpsNmeaMsgValid(uint8_t * pGpsMsgStr)
 {
     EGPSNMEAOUT ret = NON;
     if(*pGpsMsgStr)
@@ -310,11 +312,100 @@ EGPSNMEAOUT uiGpsNmeaMsgValid(char * pGpsMsgStr)
     }
 }
 
-uint32_t uiGpsNmeaTimConv(char * pGpsMsgUtcTime, int * time)
+uint32_t uiGpsNmeaTimConv(uint8_t * pGpsMsgUtcTime, int * time, void * ptr)
 {
     
     return 0;
 }
+
+uint32_t uiGpsNmeaCmdConstructor(uint8_t * cmd, EGPSNMEAIN emid, void * ptr)
+{
+    uint32_t indx = 0;
+    uint8_t * pstr = null;
+
+    if(emid)
+    {
+        indx = 8;
+    }
+    else
+    {
+        return pstr;
+    }
+    
+    switch(emid)
+    {
+        case PSRF100:
+        {
+            pstr = cmdSirfHead[i];
+            
+            break;
+        }
+        case PSRF101:
+        {
+            pstr = cmdSirfHead[i];
+            
+            break;
+        }
+        case PSRF102:
+        {
+            pstr = cmdSirfHead[i];
+            
+            break;
+        }
+        case PSRF103:
+        {
+            pstr = cmdSirfHead[i];
+            
+            break;
+        }
+        case PSRF104:
+        {
+            pstr = cmdSirfHead[i];
+            
+            break;
+        }
+        case PSRF105:
+        {
+            pstr = cmdSirfHead[i];
+            
+            break;
+        }
+        case PSRF106:
+        {
+            pstr = cmdSirfHead[i];
+            
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
+    
+    GpsNmeaStrCpy(pstr, cmd + indx, GpsNmeaStrLen(pstr));
+    
+    
+}
+
+static void GpsNmeaStrCpy(const uint8_t * src, uint8_t * dst, uint32_t uiChQty)
+{
+    int i = 0;
+    for(i = 0; i < uiChQty, i++)
+    {
+        *(dst + i) = *(src + i);
+    }
+}
+
+static uint32_t GpsNmeaStrLen(const uint8_t * str)
+{
+    uint32_t len = 0;
+    while(*str++)
+    {
+        len++;
+    }
+    return len;
+}
+
 
 /*
 **  BINARY RELEVANT
