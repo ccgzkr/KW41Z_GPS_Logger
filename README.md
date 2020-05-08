@@ -1,2 +1,19 @@
 # KW41Z_GPS_Logger
-For detailed information please see /doc/readme.txt
+
+## Install
+
+```
+```
+
+## Usage
+
+```
+```
+
+## Contributing
+
+PRs accepted.
+
+## License
+
+MIT © CCGZKR
